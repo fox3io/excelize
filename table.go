@@ -374,11 +374,33 @@ func (f *File) addTable(sheet, tableXML string, x1, y1, x2, y2, i int, opts *Tab
 		t.HeaderRowCount = intPtr(0)
 	}
 
-	if !hideHeaderRow && opts.FilterRange != "" {
+	if !hideHeaderRow && opts.FilterColumns != nil {
+		width := x2 - x1 + 1
+		ff := make([]*xlsxFilterColumn, width)
+
+		cc := make(map[int]bool)
+		for _, c := range opts.FilterColumns {
+			cc[c] = true
+		}
+
+		for i := 0; i < width; i++ {
+			showFilter := false
+			if cc[i] {
+				showFilter = true
+			}
+
+			ff[i] = &xlsxFilterColumn{
+				ColID:      i,
+				HiddenButton: !showFilter,
+			}
+		}
+
 		t.AutoFilter = &xlsxAutoFilter{
-			Ref: opts.FilterRange,
+			Ref:          ref,
+			FilterColumn: ff,
 		}
 	}
+
 	table, err := xml.Marshal(t)
 	f.saveFileList(tableXML, table)
 	return err
