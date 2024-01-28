@@ -85,6 +85,22 @@ func TestAddTable(t *testing.T) {
 	f.Pkg.Store("xl/tables/tableSingleCells1.xml", MacintoshCyrillicCharset)
 	assert.NoError(t, f.AddTable("Sheet1", &Table{Range: "A1:B2"}))
 	assert.NoError(t, f.Close())
+	// Test add table with filter columns set.
+	assert.NoError(t, f.AddTable("Sheet1", &Table{
+		Range:         "C1:G2",
+		FilterColumns: []int{0, 2},
+	}))
+	// Test add table with negative filter columns set.
+	assert.EqualError(t, f.AddTable("Sheet1", &Table{
+		Range:         "C1:G2",
+		FilterColumns: []int{-1, 2},
+	}), "incorrect index of column \"-1\"")
+	// Test add table with filter columns set out of range.
+	assert.EqualError(t, f.AddTable("Sheet1", &Table{
+		Range:         "C1:G2",
+		FilterColumns: []int{0, 10},
+	}), "incorrect index of column \"10\"")
+
 }
 
 func TestGetTables(t *testing.T) {

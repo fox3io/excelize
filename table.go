@@ -375,11 +375,15 @@ func (f *File) addTable(sheet, tableXML string, x1, y1, x2, y2, i int, opts *Tab
 	}
 
 	if !hideHeaderRow && opts.FilterColumns != nil {
-		width := x2 - x1 + 1
+		width := x2 - x1
 		ff := make([]*xlsxFilterColumn, width)
 
 		cc := make(map[int]bool)
 		for _, c := range opts.FilterColumns {
+			if c < 0 || c >= width {
+				return newInvalidAutoFilterColumnError(
+					fmt.Sprintf("%d", c))
+			}
 			cc[c] = true
 		}
 
@@ -390,7 +394,7 @@ func (f *File) addTable(sheet, tableXML string, x1, y1, x2, y2, i int, opts *Tab
 			}
 
 			ff[i] = &xlsxFilterColumn{
-				ColID:      i,
+				ColID:        i,
 				HiddenButton: !showFilter,
 			}
 		}
