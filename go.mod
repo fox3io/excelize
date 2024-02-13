@@ -1,4 +1,4 @@
-module excelize
+module github.com/fox3io/excelize
 
 go 1.21
 
