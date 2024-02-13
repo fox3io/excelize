@@ -376,7 +376,7 @@ func (f *File) addTable(sheet, tableXML string, x1, y1, x2, y2, i int, opts *Tab
 
 	if !hideHeaderRow && opts.FilterColumns != nil {
 		width := x2 - x1
-		ff := make([]*xlsxFilterColumn, width)
+		ff := make([]*xlsxFilterColumn, width+1)
 
 		cc := make(map[int]bool)
 		for _, c := range opts.FilterColumns {
@@ -387,7 +387,7 @@ func (f *File) addTable(sheet, tableXML string, x1, y1, x2, y2, i int, opts *Tab
 			cc[c] = true
 		}
 
-		for i := 0; i < width; i++ {
+		for i := 0; i <= width; i++ {
 			showFilter := false
 			if cc[i] {
 				showFilter = true
