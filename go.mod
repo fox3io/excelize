@@ -1,4 +1,4 @@
-module excelize-fork
+module excelize
 
 go 1.21
 
